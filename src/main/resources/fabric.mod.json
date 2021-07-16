@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "HideAndSeek",
+  "version": "${version}",
+  "name": "HideAndSeek",
+  "description": "Fabric Hide and Seek mod",
+  "authors": [
+    "ojs05"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/HideAndSeek/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "me.purplesmp.ojs05.hideandseek.client.HideAndSeekClient"
+    ],
+    "main": [
+      "me.purplesmp.ojs05.hideandseek.HideAndSeek"
+    ]
+  },
+  "mixins": [
+    "HideAndSeek.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.11.6",
+    "fabric": "*",
+    "minecraft": "1.17.1"
+  }
+}
