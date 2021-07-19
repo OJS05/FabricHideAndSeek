@@ -15,27 +15,38 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 public class GameManager {
 
-    @Getter
-    private final ThreadLocalRandom random = ThreadLocalRandom.current();
+    private static final ThreadLocalRandom random = ThreadLocalRandom.current();
 
-    @Getter
-    private HSTeam hiders;
+    public static ThreadLocalRandom getRandom() {
+        return random;
+    }
 
-    @Getter
-    private HSTeam seekers;
+    private static HSTeam hiders;
+
+    public static HSTeam getHiders(){
+        return hiders;
+    }
+
+    private static HSTeam seekers;
+
+    public static HSTeam getSeekers(){
+        return seekers;
+    }
 
     @Getter
     @Setter
-    private boolean canHiderJoin;
+    private static boolean canHiderJoin;
 
-    @Getter
     private boolean gameRunning;
+
+    public boolean isGameRunning(){
+        return gameRunning;
+    }
 
     @Getter
     private int gameLength;
@@ -43,8 +54,6 @@ public class GameManager {
     @Getter
     private final List<ScheduledFuture> taskList = new ArrayList<>();
 
-    @Getter
-    private final List<UUID> exemptPlayers = new ArrayList<>();
 
 
 
@@ -65,7 +74,7 @@ public class GameManager {
 
         onlinePlayers.forEach(player -> {
             HSPlayer hsPlayer = HSPlayer.getExact(player.getUuid());
-            if (hsPlayer.getCurrentTeam() == null && !hsPlayer.isExempt()) hsPlayer.setCurrentTeam(hiders, false);
+            if (hsPlayer.getCurrentTeam() == null) hsPlayer.setCurrentTeam(hiders, false);
         });
 
         canHiderJoin = true;

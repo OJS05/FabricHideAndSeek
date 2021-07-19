@@ -8,18 +8,35 @@ import java.util.List;
 
 public class HSTeam {
 
-    @Getter
+
+    private final HSTeam instance;
+
+    public HSTeam getInstance(){
+        return instance;
+    }
+
     private final String name;
 
-    @Getter
+    public String getName(){
+        return name;
+    }
+
     private final TeamType teamType;
 
-    @Getter
+    public TeamType getTeamType(){
+        return teamType;
+    }
+
     private final List<HSPlayer> members = new ArrayList<>();
+
+    public List<HSPlayer> getMembers(){
+        return members;
+    }
 
     public HSTeam(String name, TeamType teamType){
         this.name = name;
         this.teamType = teamType;
+        this.instance = this;
     }
 
     public void addPlayer(HSPlayer hsPlayer) {
