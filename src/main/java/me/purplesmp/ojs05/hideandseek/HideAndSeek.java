@@ -20,20 +20,29 @@ import java.util.concurrent.TimeUnit;
 
 public class HideAndSeek implements ModInitializer {
 
-    @Getter
     private static HideAndSeek instance;
 
-    @Getter
-    private GameManager gameManager;
+    public static HideAndSeek getInstance(){
+        return instance;
+    }
 
-    @Getter
+    private static GameManager gameManager;
+
+    public static GameManager getGameManager(){
+        return gameManager;
+    }
+
     private static MinecraftServer server;
 
-    @Getter
+    public static MinecraftServer getServer(){
+        return server;
+    }
+
     private final static ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1);
 
-    @Getter
-    private static int taskID;
+    public static ScheduledThreadPoolExecutor getScheduler(){
+        return scheduler;
+    }
 
     @Override
     public void onInitialize(){

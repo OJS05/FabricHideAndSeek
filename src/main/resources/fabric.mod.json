@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "HideAndSeek",
+  "id": "hideandseek",
   "version": "${version}",
   "name": "HideAndSeek",
   "description": "Fabric Hide and Seek mod",
@@ -9,12 +9,8 @@
   ],
   "contact": {},
   "license": "MIT",
-  "icon": "assets/HideAndSeek/icon.png",
   "environment": "*",
   "entrypoints": {
-    "client": [
-      "me.purplesmp.ojs05.hideandseek.client.HideAndSeekClient"
-    ],
     "main": [
       "me.purplesmp.ojs05.hideandseek.HideAndSeek"
     ]

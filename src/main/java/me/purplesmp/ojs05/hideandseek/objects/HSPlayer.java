@@ -13,20 +13,26 @@ import java.util.concurrent.TimeUnit;
 
 public class HSPlayer {
 
-    @Getter
     private static final ConcurrentHashMap<UUID, HSPlayer> hsPlayerMap = new ConcurrentHashMap<>();
 
-    @Getter
+    public static final ConcurrentHashMap<UUID, HSPlayer> getHsPlayerMap(){
+        return hsPlayerMap;
+    }
+
     private final UUID uuid;
+
+    public UUID getUuid(){
+        return uuid;
+    }
 
     @Getter
     private final String name;
 
-    @Getter
     private HSTeam currentTeam;
 
-    @Getter
-    private boolean exempt;
+    public HSTeam getCurrentTeam(){
+        return currentTeam;
+    }
 
     @Getter
     private ScheduledFuture leaveTask;
@@ -34,10 +40,6 @@ public class HSPlayer {
     public HSPlayer(UUID uuid, String name) {
         this.uuid = uuid;
         this.name = name;
-
-        if (HideAndSeek.getInstance().getGameManager().getExemptPlayers().contains(uuid)) {
-            this.exempt = true;
-        }
 
         hsPlayerMap.put(uuid, this);
     }
