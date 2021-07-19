@@ -20,5 +20,10 @@ public class HideAndSeek implements ModInitializer {
     public void onInitialize(){
         instance = this;
         this.server = getServer();
+
+        gameManager = new GameManager();
+        gameManager.setupGame();
     }
+
+
 }
