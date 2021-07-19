@@ -46,21 +46,13 @@ public class GameManager {
     @Getter
     private final List<UUID> exemptPlayers = new ArrayList<>();
 
-    @Getter
-    private final ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1);
+
 
     public void setupGame() {
         this.hiders = new HSTeam("Hider", TeamType.HIDER);
         this.seekers = new HSTeam("Seeker", TeamType.SEEKER);
 
-        gameLength = HideAndSeek.getInstance().getConfig().getInt("game-length");
-
-        // Load exempt users
-        Config.load()
-        Config.getConfig().getStringList("exempt-players").forEach(uuidString -> {
-            UUID uuid = UUID.fromString(uuidString);
-            exemptPlayers.add(uuid);
-        });
+        gameLength = 15;
     }
 
     public void createGame() {
@@ -79,15 +71,15 @@ public class GameManager {
         canHiderJoin = true;
         gameRunning = true;
 
-        taskList.add(scheduler.schedule(() -> {
+        taskList.add(HideAndSeek.getScheduler().schedule(() -> {
             canHiderJoin = false;
         }, 1, TimeUnit.SECONDS));
 
-        taskList.add(scheduler.schedule(() -> {
+        taskList.add(HideAndSeek.getScheduler().schedule(() -> {
             gameRunning = false;
         }, 1, TimeUnit.SECONDS));
 
-        taskList.add(scheduler.schedule(this::calculateWinner, 1, TimeUnit.SECONDS));
+        taskList.add(HideAndSeek.getScheduler().schedule(this::calculateWinner, 1, TimeUnit.SECONDS));
     }
 
     public void calculateWinner() {
@@ -114,11 +106,4 @@ public class GameManager {
 
     }
 
-    private void saveExemptList() {
-        List<String> uuidStringList = new ArrayList<>();
-        exemptPlayers.forEach(uuid -> uuidStringList.add(uuid.toString()));
-
-        HideAndSeek.getInstance().getConfig().set("exempt-players", uuidStringList);
-        HideAndSeek.getInstance().saveConfig();
-    }
 }

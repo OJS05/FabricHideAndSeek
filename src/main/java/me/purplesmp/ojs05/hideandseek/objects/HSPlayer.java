@@ -8,6 +8,8 @@ import net.minecraft.util.Formatting;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class HSPlayer {
 
@@ -27,7 +29,7 @@ public class HSPlayer {
     private boolean exempt;
 
     @Getter
-    private int leaveTaskId;
+    private ScheduledFuture leaveTask;
 
     public HSPlayer(UUID uuid, String name) {
         this.uuid = uuid;
@@ -64,6 +66,17 @@ public class HSPlayer {
         return hsPlayerMap.get(uuid);
     }
 
+    public void startLeaveTask() {
+        leaveTask = HideAndSeek.getScheduler().schedule(() -> {
+            setCurrentTeam(HideAndSeek.getInstance().getGameManager().getSeekers(),true);
+        },1, TimeUnit.SECONDS);
+    }
+
+    public void cancelLeaveTask() {
+        if (!leaveTask.isCancelled()) {
+            leaveTask.cancel(true);
+        }
+    }
 
 
 }
