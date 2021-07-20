@@ -48,14 +48,13 @@ public class GameManager {
     @Getter
     private final List<ScheduledFuture> taskList = new ArrayList<>();
 
-
-
-
     public void setupGame() {
         this.hiders = new HSTeam("Hider", TeamType.HIDER);
         this.seekers = new HSTeam("Seeker", TeamType.SEEKER);
 
-        gameLength = 15;
+        this.gameRunning = false;
+
+        this.gameLength = 15;
     }
 
     public void createGame() {
@@ -71,7 +70,7 @@ public class GameManager {
             if (hsPlayer.getCurrentTeam() == null) hsPlayer.setCurrentTeam(hiders, false);
         });
 
-        gameRunning = true;
+        this.gameRunning = true;
 
         taskList.add(HideAndSeek.getScheduler().schedule(this::finishGame, gameLength, TimeUnit.MINUTES));
 

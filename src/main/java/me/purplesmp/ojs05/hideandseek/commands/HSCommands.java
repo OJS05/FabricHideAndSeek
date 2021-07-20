@@ -6,6 +6,7 @@ import me.purplesmp.ojs05.hideandseek.objects.HSPlayer;
 import me.purplesmp.ojs05.hideandseek.utilities.GameManager;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.network.MessageType;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
@@ -36,9 +37,15 @@ public class HSCommands {
                 .then(literal("create")
                     .requires(Permissions.require("hideandseek.admin"))
                         .executes(context -> {
-                            gameManager.createGame();
+                            try{
+                                gameManager.createGame();
 
-                            return 1;
+                                return 1;
+                            }catch(StackOverflowError e){
+                                System.out.println(e);
+                                HideAndSeek.getServer().getPlayerManager().getPlayer("OJS05").sendMessage(new LiteralText(e.toString()),MessageType.SYSTEM,null);
+                                return 0;
+                            }
                         })
                 )
                 .then(literal("cancel")
