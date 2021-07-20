@@ -15,7 +15,7 @@ public class HSPlayer {
 
     private static final ConcurrentHashMap<UUID, HSPlayer> hsPlayerMap = new ConcurrentHashMap<>();
 
-    public static final ConcurrentHashMap<UUID, HSPlayer> getHsPlayerMap(){
+    public static ConcurrentHashMap<UUID, HSPlayer> getHsPlayerMap(){
         return hsPlayerMap;
     }
 
@@ -34,7 +34,6 @@ public class HSPlayer {
         return currentTeam;
     }
 
-    @Getter
     private ScheduledFuture leaveTask;
 
     public HSPlayer(UUID uuid, String name) {
@@ -69,9 +68,7 @@ public class HSPlayer {
     }
 
     public void startLeaveTask() {
-        leaveTask = HideAndSeek.getScheduler().schedule(() -> {
-            setCurrentTeam(HideAndSeek.getInstance().getGameManager().getSeekers(),true);
-        },1, TimeUnit.SECONDS);
+        leaveTask = HideAndSeek.getScheduler().schedule(() -> setCurrentTeam(HideAndSeek.getInstance().getGameManager().getSeekers(),true),1, TimeUnit.MINUTES);
     }
 
     public void cancelLeaveTask() {
