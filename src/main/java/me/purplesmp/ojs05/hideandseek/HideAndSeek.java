@@ -1,6 +1,7 @@
 package me.purplesmp.ojs05.hideandseek;
 
 import lombok.Getter;
+import me.purplesmp.ojs05.hideandseek.commands.HSCommands;
 import me.purplesmp.ojs05.hideandseek.mixin.PlayerJoinCallback;
 import me.purplesmp.ojs05.hideandseek.mixin.PlayerLeaveCallback;
 import me.purplesmp.ojs05.hideandseek.objects.HSPlayer;
@@ -26,9 +27,9 @@ public class HideAndSeek implements ModInitializer {
         return instance;
     }
 
-    private static GameManager gameManager;
+    private GameManager gameManager;
 
-    public static GameManager getGameManager(){
+    public GameManager getGameManager(){
         return gameManager;
     }
 
@@ -51,6 +52,8 @@ public class HideAndSeek implements ModInitializer {
 
         gameManager = new GameManager();
         gameManager.setupGame();
+
+        HSCommands.register();
 
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if(gameManager.isGameRunning()){

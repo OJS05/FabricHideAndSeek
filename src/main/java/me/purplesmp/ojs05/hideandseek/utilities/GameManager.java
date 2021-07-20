@@ -26,15 +26,15 @@ public class GameManager {
         return random;
     }
 
-    private static HSTeam hiders;
+    private HSTeam hiders;
 
-    public static HSTeam getHiders(){
+    public HSTeam getHiders(){
         return hiders;
     }
 
-    private static HSTeam seekers;
+    private HSTeam seekers;
 
-    public static HSTeam getSeekers(){
+    public HSTeam getSeekers(){
         return seekers;
     }
 
