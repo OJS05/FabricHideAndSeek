@@ -1,13 +1,12 @@
 package me.purplesmp.ojs05.hideandseek;
 
 import me.purplesmp.ojs05.hideandseek.commands.HSCommands;
-import me.purplesmp.ojs05.hideandseek.mixin.PlayerJoinCallback;
-import me.purplesmp.ojs05.hideandseek.mixin.PlayerLeaveCallback;
 import me.purplesmp.ojs05.hideandseek.objects.HSPlayer;
 import me.purplesmp.ojs05.hideandseek.utilities.GameManager;
 import me.purplesmp.ojs05.hideandseek.utilities.TeamType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ActionResult;
@@ -68,20 +67,20 @@ public class HideAndSeek implements ModInitializer {
             return ActionResult.SUCCESS;
         });
 
-        PlayerLeaveCallback.EVENT.register((playerEntity -> {
-            if(gameManager.isGameRunning()){
-                HSPlayer player = HSPlayer.getExact(playerEntity.getUuid());
-                if(player.getCurrentTeam().getTeamType() == TeamType.HIDER){
-                    player.startLeaveTask();
-                }
+        ServerPlayConnectionEvents.JOIN.register(((handler, sender, server1) -> {
+            if (gameManager.isGameRunning()){
+                HSPlayer player = HSPlayer.getExact(handler.getPlayer().getUuid());
+
+                player.cancelLeaveTask();
             }
         }));
 
-        PlayerJoinCallback.EVENT.register((playerEntity -> {
-            if (gameManager.isGameRunning()){
-                HSPlayer player = HSPlayer.getExact(playerEntity.getUuid());
-                
-                player.cancelLeaveTask();
+        ServerPlayConnectionEvents.DISCONNECT.register(((handler, server1) -> {
+            if(gameManager.isGameRunning()){
+                HSPlayer player = HSPlayer.getExact(handler.getPlayer().getUuid());
+                if(player.getCurrentTeam().getTeamType() == TeamType.HIDER){
+                    player.startLeaveTask();
+                }
             }
         }));
     }
