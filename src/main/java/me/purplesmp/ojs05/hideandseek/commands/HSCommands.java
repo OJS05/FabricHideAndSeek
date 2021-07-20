@@ -9,7 +9,6 @@ import net.minecraft.network.MessageType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,14 +58,14 @@ public class HSCommands {
                                     HSPlayer hsPlayer = HSPlayer.getExact(player.getUuid());
                                     if(gameManager.getSeekers().getMembers().contains(hsPlayer)){
                                         if(!cooldown.contains(hsPlayer.getUuid())){
-                                            int randomIndex = gameManager.getRandom().nextInt(gameManager.getHiders().getMembers().size());
+                                            int randomIndex = GameManager.getRandom().nextInt(gameManager.getHiders().getMembers().size());
                                             HSPlayer randomHSPlayerHider = gameManager.getHiders().getMembers().get(randomIndex);
                                             ServerPlayerEntity randomHider = HideAndSeek.getServer().getPlayerManager().getPlayer(randomHSPlayerHider.getUuid());
 
                                             if(randomHider != null){
-                                                int approximateX = gameManager.getRandom().nextInt(randomHider.getBlockX() - 15, randomHider.getBlockX() + 15);
-                                                int approximateY = gameManager.getRandom().nextInt(randomHider.getBlockY() - 15, randomHider.getBlockY() + 15);
-                                                int approximateZ = gameManager.getRandom().nextInt(randomHider.getBlockZ() - 15, randomHider.getBlockZ() + 15);
+                                                int approximateX = GameManager.getRandom().nextInt(randomHider.getBlockX() - 15, randomHider.getBlockX() + 15);
+                                                int approximateY = GameManager.getRandom().nextInt(randomHider.getBlockY() - 15, randomHider.getBlockY() + 15);
+                                                int approximateZ = GameManager.getRandom().nextInt(randomHider.getBlockZ() - 15, randomHider.getBlockZ() + 15);
 
                                                 player.sendMessage(new LiteralText(Formatting.AQUA + "There is a random hider around " + Formatting.GOLD + approximateX + ", " + approximateY + ", " + approximateZ),MessageType.CHAT,player.getUuid());
                                             }
@@ -75,7 +74,7 @@ public class HSCommands {
 
                                             HideAndSeek.getScheduler().schedule(() -> {
                                                 cooldown.remove(player.getUuid());
-                                            },1, TimeUnit.SECONDS);
+                                            }, (long) (gameManager.getSeekers().getMembers().size() * 0.75), TimeUnit.MINUTES);
                                         }else{
                                             player.sendMessage(new LiteralText(Formatting.RED + "You are still on a cooldown."), MessageType.CHAT, player.getUuid());
                                         }
@@ -104,7 +103,7 @@ public class HSCommands {
 
                                             HideAndSeek.getScheduler().schedule(() -> {
                                                 cooldown.remove(player.getUuid());
-                                            },1,TimeUnit.SECONDS);
+                                            }, (long) (gameManager.getHiders().getMembers().size() * 0.5),TimeUnit.MINUTES);
                                         } else {
                                             player.sendMessage(new LiteralText(Formatting.RED + "You are still on a cooldown"), MessageType.CHAT, player.getUuid());
                                         }

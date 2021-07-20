@@ -2,7 +2,6 @@ package me.purplesmp.ojs05.hideandseek.utilities;
 
 import com.google.common.collect.ImmutableList;
 import lombok.Getter;
-import lombok.Setter;
 import me.purplesmp.ojs05.hideandseek.HideAndSeek;
 import me.purplesmp.ojs05.hideandseek.objects.HSPlayer;
 import me.purplesmp.ojs05.hideandseek.objects.HSTeam;
@@ -13,7 +12,6 @@ import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -37,10 +35,6 @@ public class GameManager {
     public HSTeam getSeekers(){
         return seekers;
     }
-
-    @Getter
-    @Setter
-    private static boolean canHiderJoin;
 
     private boolean gameRunning;
 
@@ -77,18 +71,11 @@ public class GameManager {
             if (hsPlayer.getCurrentTeam() == null) hsPlayer.setCurrentTeam(hiders, false);
         });
 
-        canHiderJoin = true;
         gameRunning = true;
 
-        taskList.add(HideAndSeek.getScheduler().schedule(() -> {
-            canHiderJoin = false;
-        }, 1, TimeUnit.SECONDS));
+        taskList.add(HideAndSeek.getScheduler().schedule(this::finishGame, gameLength, TimeUnit.MINUTES));
 
-        taskList.add(HideAndSeek.getScheduler().schedule(() -> {
-            gameRunning = false;
-        }, 1, TimeUnit.SECONDS));
-
-        taskList.add(HideAndSeek.getScheduler().schedule(this::calculateWinner, 1, TimeUnit.SECONDS));
+        taskList.add(HideAndSeek.getScheduler().schedule(this::calculateWinner, 899, TimeUnit.SECONDS));
     }
 
     public void calculateWinner() {
@@ -107,7 +94,6 @@ public class GameManager {
         HSPlayer.getHsPlayerMap().values().forEach(hsPlayer -> hsPlayer.setCurrentTeam(null, false));
 
         this.gameRunning = false;
-        this.canHiderJoin = false;
 
         taskList.forEach(scheduledFuture -> {
             if (!scheduledFuture.isCancelled()) scheduledFuture.cancel(true);

@@ -1,19 +1,11 @@
 package me.purplesmp.ojs05.hideandseek.objects;
 
-import lombok.Getter;
 import me.purplesmp.ojs05.hideandseek.utilities.TeamType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HSTeam {
-
-
-    private final HSTeam instance;
-
-    public HSTeam getInstance(){
-        return instance;
-    }
 
     private final String name;
 
@@ -36,7 +28,6 @@ public class HSTeam {
     public HSTeam(String name, TeamType teamType){
         this.name = name;
         this.teamType = teamType;
-        this.instance = this;
     }
 
     public void addPlayer(HSPlayer hsPlayer) {

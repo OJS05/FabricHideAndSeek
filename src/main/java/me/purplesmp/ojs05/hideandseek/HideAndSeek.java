@@ -1,6 +1,5 @@
 package me.purplesmp.ojs05.hideandseek;
 
-import lombok.Getter;
 import me.purplesmp.ojs05.hideandseek.commands.HSCommands;
 import me.purplesmp.ojs05.hideandseek.mixin.PlayerJoinCallback;
 import me.purplesmp.ojs05.hideandseek.mixin.PlayerLeaveCallback;
@@ -9,15 +8,11 @@ import me.purplesmp.ojs05.hideandseek.utilities.GameManager;
 import me.purplesmp.ojs05.hideandseek.utilities.TeamType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.ActionResult;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public class HideAndSeek implements ModInitializer {
 
@@ -48,7 +43,7 @@ public class HideAndSeek implements ModInitializer {
     @Override
     public void onInitialize(){
         instance = this;
-        this.server = getServer();
+        server = getServer();
 
         gameManager = new GameManager();
         gameManager.setupGame();
@@ -57,15 +52,11 @@ public class HideAndSeek implements ModInitializer {
 
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if(gameManager.isGameRunning()){
-                Entity damagingEntity = player;
-                Entity victimEntity = entity;
 
-                if(damagingEntity instanceof PlayerEntity && victimEntity instanceof PlayerEntity){
-                    PlayerEntity attacker = player;
-                    PlayerEntity victim = (PlayerEntity) entity;
+                if(player != null && entity instanceof PlayerEntity victim){
 
                     HSPlayer victimHsPlayer = HSPlayer.getExact(victim.getUuid());
-                    HSPlayer damagerHsPlayer = HSPlayer.getExact(attacker.getUuid());
+                    HSPlayer damagerHsPlayer = HSPlayer.getExact(player.getUuid());
 
                     if (damagerHsPlayer.getCurrentTeam().getTeamType() == TeamType.SEEKER &&
                             victimHsPlayer.getCurrentTeam().getTeamType() == TeamType.HIDER) {
