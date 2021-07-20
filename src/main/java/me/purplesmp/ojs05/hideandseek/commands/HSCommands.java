@@ -38,12 +38,12 @@ public class HSCommands {
                     .requires(Permissions.require("hideandseek.admin"))
                         .executes(context -> {
                             try{
-                                gameManager.createGame();
+                                gameManager.createGame(context.getSource());
 
                                 return 1;
                             }catch(StackOverflowError e){
                                 System.out.println(e);
-                                HideAndSeek.getServer().getPlayerManager().getPlayer("OJS05").sendMessage(new LiteralText(e.toString()),MessageType.SYSTEM,null);
+                                context.getSource().getServer().getPlayerManager().getPlayer("OJS05").sendMessage(new LiteralText(e.toString()),MessageType.SYSTEM,null);
                                 return 0;
                             }
                         })
@@ -67,7 +67,7 @@ public class HSCommands {
                                         if(!cooldown.contains(hsPlayer.getUuid())){
                                             int randomIndex = GameManager.getRandom().nextInt(gameManager.getHiders().getMembers().size());
                                             HSPlayer randomHSPlayerHider = gameManager.getHiders().getMembers().get(randomIndex);
-                                            ServerPlayerEntity randomHider = HideAndSeek.getServer().getPlayerManager().getPlayer(randomHSPlayerHider.getUuid());
+                                            ServerPlayerEntity randomHider = context.getSource().getServer().getPlayerManager().getPlayer(randomHSPlayerHider.getUuid());
 
                                             if(randomHider != null){
                                                 int approximateX = GameManager.getRandom().nextInt(randomHider.getBlockX() - 15, randomHider.getBlockX() + 15);
@@ -90,7 +90,7 @@ public class HSCommands {
                                         if (!cooldown.contains(player.getUuid())) {
                                             double distMin = 1000000000;
                                             for (HSPlayer seekers : gameManager.getSeekers().getMembers()) {
-                                                ServerPlayerEntity seekerPlayer = HideAndSeek.getServer().getPlayerManager().getPlayer(seekers.getUuid());
+                                                ServerPlayerEntity seekerPlayer = context.getSource().getServer().getPlayerManager().getPlayer(seekers.getUuid());
 
                                                 if (seekerPlayer != null) {
 

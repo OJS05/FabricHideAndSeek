@@ -1,15 +1,22 @@
 package me.purplesmp.ojs05.hideandseek;
 
+import lombok.SneakyThrows;
 import me.purplesmp.ojs05.hideandseek.commands.HSCommands;
 import me.purplesmp.ojs05.hideandseek.objects.HSPlayer;
 import me.purplesmp.ojs05.hideandseek.utilities.GameManager;
 import me.purplesmp.ojs05.hideandseek.utilities.TeamType;
+import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.loader.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
+import net.minecraft.world.World;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -42,7 +49,9 @@ public class HideAndSeek implements ModInitializer {
     @Override
     public void onInitialize(){
         instance = this;
-        server = getServer();
+        ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
+
+
 
         gameManager = new GameManager();
         gameManager.setupGame();
@@ -68,10 +77,19 @@ public class HideAndSeek implements ModInitializer {
         });
 
         ServerPlayConnectionEvents.JOIN.register(((handler, sender, server1) -> {
-            if (gameManager.isGameRunning()){
-                HSPlayer player = HSPlayer.getExact(handler.getPlayer().getUuid());
 
-                player.cancelLeaveTask();
+            ServerPlayerEntity player = handler.getPlayer();
+
+            HSPlayer hsPlayer = HSPlayer.getOrCreate(player.getUuid(), player.getName().getString());
+
+            if (gameManager.isGameRunning()) {
+                if (hsPlayer.getCurrentTeam() == null) {
+                    if (gameManager.isCanHidersJoin()) {
+                        hsPlayer.setCurrentTeam(HideAndSeek.getInstance().getGameManager().getHiders(), true);
+                    }
+                }
+
+                hsPlayer.cancelLeaveTask();
             }
         }));
 
@@ -83,6 +101,10 @@ public class HideAndSeek implements ModInitializer {
                 }
             }
         }));
+    }
+
+    private void onServerStarted(MinecraftServer minecraftServer){
+        server = minecraftServer;
     }
 
 }

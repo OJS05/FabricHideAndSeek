@@ -58,7 +58,7 @@ public class HSPlayer {
 
         this.currentTeam = newTeam;
 
-        HideAndSeek.getServer().getPlayerManager().broadcastChatMessage(new LiteralText(Formatting.GOLD + name + Formatting.AQUA + " is now a " + Formatting.GOLD + newTeam.getName()), MessageType.CHAT, this.getUuid());
+        HideAndSeek.getServer().getPlayerManager().broadcastChatMessage(new LiteralText(Formatting.GOLD + getName() + Formatting.AQUA + " is now a " + Formatting.GOLD + newTeam.getName()), MessageType.CHAT, this.getUuid());
 
         if (triggerUpdate) {
             // Calculate winner after every team change
@@ -68,6 +68,13 @@ public class HSPlayer {
 
     public static HSPlayer getExact(UUID uuid) {
         return hsPlayerMap.get(uuid);
+    }
+
+    public static HSPlayer getOrCreate(UUID uuid, String displayName) {
+        if (hsPlayerMap.containsKey(uuid)) {
+            return hsPlayerMap.get(uuid);
+        }
+        return new HSPlayer(uuid, displayName);
     }
 
     public void startLeaveTask() {
