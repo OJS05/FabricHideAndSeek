@@ -1,6 +1,5 @@
 package me.purplesmp.ojs05.hideandseek.objects;
 
-import lombok.Getter;
 import me.purplesmp.ojs05.hideandseek.HideAndSeek;
 import net.minecraft.network.MessageType;
 import net.minecraft.text.LiteralText;
@@ -15,25 +14,25 @@ public class HSPlayer {
 
     private static final ConcurrentHashMap<UUID, HSPlayer> hsPlayerMap = new ConcurrentHashMap<>();
 
-    public static ConcurrentHashMap<UUID, HSPlayer> getHsPlayerMap(){
+    public static ConcurrentHashMap<UUID, HSPlayer> getHsPlayerMap() {
         return hsPlayerMap;
     }
 
     private final UUID uuid;
 
-    public UUID getUuid(){
+    public UUID getUuid() {
         return uuid;
     }
 
     private final String name;
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
     private HSTeam currentTeam;
 
-    public HSTeam getCurrentTeam(){
+    public HSTeam getCurrentTeam() {
         return currentTeam;
     }
 
@@ -78,7 +77,7 @@ public class HSPlayer {
     }
 
     public void startLeaveTask() {
-        leaveTask = HideAndSeek.getScheduler().schedule(() -> setCurrentTeam(HideAndSeek.getInstance().getGameManager().getSeekers(),true),1, TimeUnit.MINUTES);
+        leaveTask = HideAndSeek.getScheduler().schedule(() -> setCurrentTeam(HideAndSeek.getInstance().getGameManager().getSeekers(), true), 1, TimeUnit.MINUTES);
     }
 
     public void cancelLeaveTask() {

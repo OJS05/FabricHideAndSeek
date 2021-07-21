@@ -9,23 +9,23 @@ public class HSTeam {
 
     private final String name;
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
     private final TeamType teamType;
 
-    public TeamType getTeamType(){
+    public TeamType getTeamType() {
         return teamType;
     }
 
     private final List<HSPlayer> members = new ArrayList<>();
 
-    public List<HSPlayer> getMembers(){
+    public List<HSPlayer> getMembers() {
         return members;
     }
 
-    public HSTeam(String name, TeamType teamType){
+    public HSTeam(String name, TeamType teamType) {
         this.name = name;
         this.teamType = teamType;
     }

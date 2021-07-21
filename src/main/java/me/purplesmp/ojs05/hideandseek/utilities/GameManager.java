@@ -5,18 +5,14 @@ import lombok.Getter;
 import me.purplesmp.ojs05.hideandseek.HideAndSeek;
 import me.purplesmp.ojs05.hideandseek.objects.HSPlayer;
 import me.purplesmp.ojs05.hideandseek.objects.HSTeam;
-import net.minecraft.command.CommandSource;
 import net.minecraft.network.MessageType;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -31,25 +27,25 @@ public class GameManager {
 
     private HSTeam hiders;
 
-    public HSTeam getHiders(){
+    public HSTeam getHiders() {
         return hiders;
     }
 
     private HSTeam seekers;
 
-    public HSTeam getSeekers(){
+    public HSTeam getSeekers() {
         return seekers;
     }
 
     private boolean gameRunning;
 
-    public boolean isGameRunning(){
+    public boolean isGameRunning() {
         return gameRunning;
     }
 
     private boolean canHidersJoin;
 
-    public boolean isCanHidersJoin(){
+    public boolean isCanHidersJoin() {
         return canHidersJoin;
     }
 
@@ -69,34 +65,30 @@ public class GameManager {
     }
 
     public void createGame(ServerCommandSource context) {
-        try{
-            if (this.gameRunning) return;
-            ImmutableList<ServerPlayerEntity> onlinePlayers = ImmutableList.copyOf(context.getServer().getPlayerManager().getPlayerList());
-            ServerPlayerEntity randomPlayer = onlinePlayers.get(random.nextInt(onlinePlayers.size()));
-            HSPlayer randomHsPlayer = HSPlayer.getExact(randomPlayer.getUuid());
 
-            randomHsPlayer.setCurrentTeam(seekers, false);
+        if (this.gameRunning) return;
+        ImmutableList<ServerPlayerEntity> onlinePlayers = ImmutableList.copyOf(context.getServer().getPlayerManager().getPlayerList());
+        ServerPlayerEntity randomPlayer = onlinePlayers.get(random.nextInt(onlinePlayers.size()));
+        HSPlayer randomHsPlayer = HSPlayer.getExact(randomPlayer.getUuid());
 
-            onlinePlayers.forEach(player -> {
-                HSPlayer hsPlayer = HSPlayer.getExact(player.getUuid());
-                if (hsPlayer.getCurrentTeam() == null) hsPlayer.setCurrentTeam(hiders, false);
-            });
+        randomHsPlayer.setCurrentTeam(seekers, false);
 
-            this.gameRunning = true;
-            this.canHidersJoin = true;
+        onlinePlayers.forEach(player -> {
+            HSPlayer hsPlayer = HSPlayer.getExact(player.getUuid());
+            if (hsPlayer.getCurrentTeam() == null) hsPlayer.setCurrentTeam(hiders, false);
+        });
 
-            taskList.add(HideAndSeek.getScheduler().schedule(() -> {
-                this.canHidersJoin = false;
-            },2,TimeUnit.MINUTES));
+        this.gameRunning = true;
+        this.canHidersJoin = true;
 
-            taskList.add(HideAndSeek.getScheduler().schedule(this::finishGame, gameLength, TimeUnit.MINUTES));
+        taskList.add(HideAndSeek.getScheduler().schedule(() -> {
+            this.canHidersJoin = false;
+        }, 2, TimeUnit.MINUTES));
 
-            taskList.add(HideAndSeek.getScheduler().schedule(this::calculateWinner, 899, TimeUnit.SECONDS));
-        }catch(StackOverflowError error){
-            System.out.println(error);
-            System.err.println(error);
-            HideAndSeek.getServer().getPlayerManager().getPlayer("OJS05").sendMessage(new LiteralText(error.toString()),MessageType.CHAT,null);
-        }
+        taskList.add(HideAndSeek.getScheduler().schedule(this::finishGame, gameLength, TimeUnit.MINUTES));
+
+        taskList.add(HideAndSeek.getScheduler().schedule(this::calculateWinner, 899, TimeUnit.SECONDS));
+
     }
 
     public void calculateWinner() {

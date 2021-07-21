@@ -1,22 +1,17 @@
 package me.purplesmp.ojs05.hideandseek;
 
-import lombok.SneakyThrows;
 import me.purplesmp.ojs05.hideandseek.commands.HSCommands;
 import me.purplesmp.ojs05.hideandseek.objects.HSPlayer;
 import me.purplesmp.ojs05.hideandseek.utilities.GameManager;
 import me.purplesmp.ojs05.hideandseek.utilities.TeamType;
-import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.loader.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
-import net.minecraft.world.World;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -24,33 +19,32 @@ public class HideAndSeek implements ModInitializer {
 
     private static HideAndSeek instance;
 
-    public static HideAndSeek getInstance(){
+    public static HideAndSeek getInstance() {
         return instance;
     }
 
     private GameManager gameManager;
 
-    public GameManager getGameManager(){
+    public GameManager getGameManager() {
         return gameManager;
     }
 
     private static MinecraftServer server;
 
-    public static MinecraftServer getServer(){
+    public static MinecraftServer getServer() {
         return server;
     }
 
     private final static ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1);
 
-    public static ScheduledThreadPoolExecutor getScheduler(){
+    public static ScheduledThreadPoolExecutor getScheduler() {
         return scheduler;
     }
 
     @Override
-    public void onInitialize(){
+    public void onInitialize() {
         instance = this;
         ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
-
 
 
         gameManager = new GameManager();
@@ -59,9 +53,9 @@ public class HideAndSeek implements ModInitializer {
         HSCommands.register();
 
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            if(gameManager.isGameRunning()){
+            if (gameManager.isGameRunning()) {
 
-                if(player != null && entity instanceof PlayerEntity victim){
+                if (player != null && entity instanceof PlayerEntity victim) {
 
                     HSPlayer victimHsPlayer = HSPlayer.getExact(victim.getUuid());
                     HSPlayer damagerHsPlayer = HSPlayer.getExact(player.getUuid());
@@ -94,16 +88,16 @@ public class HideAndSeek implements ModInitializer {
         }));
 
         ServerPlayConnectionEvents.DISCONNECT.register(((handler, server1) -> {
-            if(gameManager.isGameRunning()){
+            if (gameManager.isGameRunning()) {
                 HSPlayer player = HSPlayer.getExact(handler.getPlayer().getUuid());
-                if(player.getCurrentTeam().getTeamType() == TeamType.HIDER){
+                if (player.getCurrentTeam().getTeamType() == TeamType.HIDER) {
                     player.startLeaveTask();
                 }
             }
         }));
     }
 
-    private void onServerStarted(MinecraftServer minecraftServer){
+    private void onServerStarted(MinecraftServer minecraftServer) {
         server = minecraftServer;
     }
 
