@@ -87,15 +87,17 @@ public class GameManager {
 
         taskList.add(HideAndSeek.getScheduler().schedule(this::finishGame, gameLength, TimeUnit.MINUTES));
 
-        taskList.add(HideAndSeek.getScheduler().schedule(this::calculateWinner, 899, TimeUnit.SECONDS));
+        taskList.add(HideAndSeek.getScheduler().schedule(() -> {
+                    HideAndSeek.getServer().getPlayerManager().broadcastChatMessage(new LiteralText(Formatting.AQUA + "The hiders have won!"), MessageType.CHAT, HideAndSeek.getServer().getPlayerManager().getPlayer("OJS05").getUuid());
 
+                }, 899, TimeUnit.SECONDS));
     }
 
     public void calculateWinner() {
         int hiderSize = hiders.getMembers().size();
 
         if (hiderSize == 0) {
-            HideAndSeek.getServer().getPlayerManager().broadcastChatMessage(new LiteralText(Formatting.DARK_RED + "The seekers have won!"), MessageType.CHAT, null);
+            HideAndSeek.getServer().getPlayerManager().broadcastChatMessage(new LiteralText(Formatting.DARK_RED + "The seekers have won!"), MessageType.CHAT, HideAndSeek.getServer().getPlayerManager().getPlayer("OJS05").getUuid());
             finishGame();
         }
     }
