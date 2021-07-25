@@ -13,6 +13,7 @@ import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -55,6 +56,9 @@ public class GameManager {
     @Getter
     private final List<ScheduledFuture> taskList = new ArrayList<>();
 
+    @Getter
+    private final List<UUID> exemptPlayers = new ArrayList<>();
+
     public void setupGame() {
         this.hiders = new HSTeam("Hider", TeamType.HIDER);
         this.seekers = new HSTeam("Seeker", TeamType.SEEKER);
@@ -62,6 +66,11 @@ public class GameManager {
         this.gameRunning = false;
 
         this.gameLength = 15;
+
+        Config.getExemptPlayerList().forEach(uuidString -> {
+            UUID uuid = UUID.fromString(uuidString);
+            exemptPlayers.add(uuid);
+        });
     }
 
     public void createGame(ServerCommandSource context) {
@@ -75,7 +84,7 @@ public class GameManager {
 
         onlinePlayers.forEach(player -> {
             HSPlayer hsPlayer = HSPlayer.getExact(player.getUuid());
-            if (hsPlayer.getCurrentTeam() == null) hsPlayer.setCurrentTeam(hiders, false);
+            if (hsPlayer.getCurrentTeam() == null && !hsPlayer.isExempt()) hsPlayer.setCurrentTeam(hiders, false);
         });
 
         this.gameRunning = true;
@@ -97,7 +106,10 @@ public class GameManager {
         int hiderSize = hiders.getMembers().size();
 
         if (hiderSize == 0) {
-            HideAndSeek.getServer().getPlayerManager().broadcastChatMessage(new LiteralText(Formatting.DARK_RED + "The seekers have won!"), MessageType.CHAT, HideAndSeek.getServer().getPlayerManager().getPlayer("OJS05").getUuid());
+            HideAndSeek.getInstance().getGameManager().getSeekers().getMembers().forEach(seeker -> {
+                ServerPlayerEntity player = HideAndSeek.getServer().getPlayerManager().getPlayer(seeker.getUuid());
+                player.sendMessage(new LiteralText(Formatting.RED + "The seekers have won!"),true);
+            });
             finishGame();
         }
     }

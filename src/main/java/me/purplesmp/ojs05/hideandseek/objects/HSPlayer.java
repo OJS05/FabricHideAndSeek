@@ -36,13 +36,33 @@ public class HSPlayer {
         return currentTeam;
     }
 
+    private boolean exempt;
+
+    public boolean isExempt(){
+        return exempt;
+    }
+
     private ScheduledFuture leaveTask;
 
     public HSPlayer(UUID uuid, String name) {
         this.uuid = uuid;
         this.name = name;
 
+        if (HideAndSeek.getInstance().getGameManager().getExemptPlayers().contains(uuid)) {
+            this.exempt = true;
+        }
+
         hsPlayerMap.put(uuid, this);
+    }
+
+    public void setExempt(boolean exempt) {
+        this.exempt = exempt;
+
+        if (exempt) {
+            HideAndSeek.getInstance().getGameManager().getExemptPlayers().add(uuid);
+        } else {
+            HideAndSeek.getInstance().getGameManager().getExemptPlayers().remove(uuid);
+        }
     }
 
     public void setCurrentTeam(HSTeam newTeam, boolean triggerUpdate) {

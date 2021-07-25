@@ -5,7 +5,9 @@ import me.purplesmp.ojs05.hideandseek.HideAndSeek;
 import me.purplesmp.ojs05.hideandseek.objects.HSPlayer;
 import me.purplesmp.ojs05.hideandseek.utilities.GameManager;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.minecraft.command.CommandSource;
 import net.minecraft.network.MessageType;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
@@ -45,6 +47,19 @@ public class HSCommands {
                         .requires(Permissions.require("hideandseek.admin"))
                         .executes(context -> {
                             gameManager.finishGame();
+
+                            return 1;
+                        })
+                )
+                .then(literal("exempt")
+                    .requires(Permissions.require("hideandseek.admin"))
+                        .executes(context -> {
+                            ServerPlayerEntity player = context.getSource().getPlayer();
+                            HSPlayer hsPlayer = HSPlayer.getExact(player.getUuid());
+
+                            if (!hsPlayer.isExempt()) {
+                                hsPlayer.setExempt(true);
+                            }
 
                             return 1;
                         })

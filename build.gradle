@@ -29,6 +29,9 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation 'me.lucko:fabric-permissions-api:0.1-SNAPSHOT'
 
+    implementation 'com.github.simplix-softworks:simplixstorage:3.2.3'
+
+
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
